@@ -39,9 +39,10 @@ const Coupon: React.FC<CouponProps> = ({ coupon, onRedeem }) => {
       variant: "default",
     });
     
-    // Open WhatsApp with pre-formatted message
+    // Open WhatsApp with pre-formatted message to a specific number
+    const phoneNumber = "5512982537231"; // Your phone number in international format
     const encodedMessage = encodeURIComponent(coupon.whatsappMessage);
-    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
   };
 
   // Flip the card when clicked
