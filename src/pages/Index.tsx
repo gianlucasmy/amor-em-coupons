@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import CouponSection from '../components/CouponSection';
 import Footer from '../components/Footer';
 import BackgroundAnimation from '../components/BackgroundAnimation';
+import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   useEffect(() => {
@@ -35,6 +36,9 @@ const Index = () => {
         <CouponSection />
         <Footer />
       </div>
+      
+      {/* Toast notifications */}
+      <Toaster />
     </div>
   );
 };
