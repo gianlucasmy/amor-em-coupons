@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import Coupon from './Coupon';
 import { useCoupons, CouponGroup } from '../utils/couponData';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -17,28 +18,17 @@ const CouponSection: React.FC = () => {
   const [activeGroup, setActiveGroup] = useState<CouponGroup>("group1");
   const [showResetDialog, setShowResetDialog] = useState(false);
 
-  useEffect(() => {
-    console.log('CouponSection mounted, setting active group:', activeGroup);
-    toggleCouponGroup(activeGroup);
-  }, []);
-
   const handleGroupToggle = (group: CouponGroup) => {
-    console.log('Toggling group to:', group);
     setActiveGroup(group);
     toggleCouponGroup(group);
   };
   
   const handleResetCoupons = () => {
-    console.log('Resetting all coupons');
     resetCouponsForNewMonth();
     setShowResetDialog(false);
   };
   
-  const handleRedeemCoupon = (couponId: string) => {
-    console.log('Redeeming coupon from CouponSection:', couponId);
-    redeemCoupon(couponId);
-  };
-  
+  // Count available and redeemed coupons per group
   const getCouponStats = (group: CouponGroup) => {
     const groupCoupons = coupons.filter(c => c.group === group);
     const available = groupCoupons.filter(c => c.available).length;
@@ -49,12 +39,11 @@ const CouponSection: React.FC = () => {
   const group1Stats = getCouponStats("group1");
   const group2Stats = getCouponStats("group2");
 
-  console.log('Current coupons state:', coupons);
-
   return (
     <section className="py-8 mb-12">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="glass rounded-2xl p-6 sm:p-8 shadow-soft animate-fade-in delay-200">
+          {/* Group selector */}
           <div className="flex justify-center mb-8">
             <div className="flex p-1 rounded-xl bg-soft-cream">
               <button
@@ -94,6 +83,7 @@ const CouponSection: React.FC = () => {
             </div>
           </div>
           
+          {/* Admin reset button (only visible to the creator) */}
           <div className="absolute top-4 right-4">
             <Popover>
               <PopoverTrigger asChild>
@@ -125,6 +115,7 @@ const CouponSection: React.FC = () => {
             </Popover>
           </div>
           
+          {/* Group description */}
           <div className="text-center mb-8">
             <h2 className="font-serif text-2xl font-bold text-accent mb-2">
               {activeGroup === "group1" ? "Experiências Gastronômicas" : "Momentos Especiais"}
@@ -136,18 +127,20 @@ const CouponSection: React.FC = () => {
             </p>
           </div>
           
+          {/* Coupons grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {coupons
               .filter(coupon => coupon.group === activeGroup)
               .map((coupon, index) => (
                 <div key={coupon.id} className={`animate-fade-in delay-${(index + 1) * 100}`}>
-                  <Coupon coupon={coupon} onRedeem={handleRedeemCoupon} />
+                  <Coupon coupon={coupon} onRedeem={redeemCoupon} />
                 </div>
               ))}
           </div>
         </div>
       </div>
       
+      {/* Reset confirmation dialog */}
       <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <AlertDialogContent className="glass-dialog">
           <AlertDialogHeader>

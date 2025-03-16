@@ -23,9 +23,7 @@ const Coupon: React.FC<CouponProps> = ({ coupon, onRedeem }) => {
   };
 
   const confirmRedeem = () => {
-    console.log('Confirming coupon redemption:', coupon.id);
-    
-    // Call the onRedeem function to mark the coupon as redeemed
+    // Mark coupon as redeemed
     onRedeem(coupon.id);
     
     // Close dialog
@@ -44,22 +42,12 @@ const Coupon: React.FC<CouponProps> = ({ coupon, onRedeem }) => {
     // Open WhatsApp with pre-formatted message to a specific number
     const phoneNumber = "5512982537231"; // Your phone number in international format
     const encodedMessage = encodeURIComponent(coupon.whatsappMessage);
-    
-    // Use timeout to ensure the state updates before opening WhatsApp
-    setTimeout(() => {
-      try {
-        console.log('Opening WhatsApp link:', `https://wa.me/${phoneNumber}?text=${encodedMessage}`);
-        window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-      } catch (error) {
-        console.error('Failed to open WhatsApp:', error);
-      }
-    }, 300);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
   };
 
   // Flip the card when clicked
   const handleCouponClick = () => {
     if (coupon.available) {
-      console.log('Flipping coupon card:', coupon.title);
       setIsFlipped(!isFlipped);
     }
   };
