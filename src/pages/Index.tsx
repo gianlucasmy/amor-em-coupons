@@ -1,11 +1,39 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useEffect } from 'react';
+import Header from '../components/Header';
+import CouponSection from '../components/CouponSection';
+import Footer from '../components/Footer';
+import BackgroundAnimation from '../components/BackgroundAnimation';
 
 const Index = () => {
+  useEffect(() => {
+    // Set page title
+    document.title = "Cupons de Amor";
+    
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+    
+    // Add a subtle entrance animation to the body
+    document.body.style.opacity = "0";
+    setTimeout(() => {
+      document.body.style.transition = "opacity 800ms ease-in-out";
+      document.body.style.opacity = "1";
+    }, 100);
+    
+    return () => {
+      document.body.style.transition = "";
+      document.body.style.opacity = "";
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen">
+      <BackgroundAnimation />
+      
+      <div className="py-8 sm:py-12">
+        <Header />
+        <CouponSection />
+        <Footer />
       </div>
     </div>
   );
