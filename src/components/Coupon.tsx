@@ -23,7 +23,7 @@ const Coupon: React.FC<CouponProps> = ({ coupon, onRedeem }) => {
   };
 
   const confirmRedeem = () => {
-    // Mark coupon as redeemed
+    // Call the onRedeem function to mark the coupon as redeemed
     onRedeem(coupon.id);
     
     // Close dialog
