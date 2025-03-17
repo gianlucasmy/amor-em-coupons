@@ -13,9 +13,10 @@ export interface Coupon {
   whatsappMessage: string;
   redeemed: boolean;
   redeemedAt?: Date;
+  month?: number; // Month when this coupon is available (1-12)
 }
 
-// Initial coupon data
+// Initial coupon data with real images
 const initialCoupons: Coupon[] = [
   // Group 1
   {
@@ -26,37 +27,41 @@ const initialCoupons: Coupon[] = [
     available: true,
     image: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Cinema com BK'! 🎬🍿 Quando podemos marcar?",
-    redeemed: false
+    redeemed: false,
+    month: 1
   },
   {
     id: "digao",
     title: "Comer no Digão",
     description: "Um jantar casual em um restaurante aconchegante.",
     group: "group1",
-    available: true,
+    available: false,
     image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Comer no Digão'! 🍽️ Quando podemos ir?",
-    redeemed: false
+    redeemed: false,
+    month: 2
   },
   {
     id: "cabana",
     title: "Almoçar no Cabana",
     description: "Um almoço especial em um ambiente descontraído.",
     group: "group1",
-    available: true,
+    available: false,
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Almoçar no Cabana'! 🍴 Que tal irmos neste final de semana?",
-    redeemed: false
+    redeemed: false,
+    month: 3
   },
   {
     id: "perdita",
     title: "Café na Perdita",
     description: "Um café da manhã ou lanche da tarde em um ambiente acolhedor.",
     group: "group1",
-    available: true,
+    available: false,
     image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Café na Perdita'! ☕ Vamos?",
-    redeemed: false
+    redeemed: false,
+    month: 4
   },
   
   // Group 2
@@ -65,10 +70,11 @@ const initialCoupons: Coupon[] = [
     title: "Copinho no B&B",
     description: "Uma experiência de drinks ou degustação em um bar charmoso.",
     group: "group2",
-    available: false,
+    available: true,
     image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Copinho no B&B'! 🥂 Vamos dar uma passada lá?",
-    redeemed: false
+    redeemed: false,
+    month: 1
   },
   {
     id: "pao-de-queijo",
@@ -78,7 +84,8 @@ const initialCoupons: Coupon[] = [
     available: false,
     image: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Torta na Pão de Queijo'! 🧀🍰 Estou com vontade!",
-    redeemed: false
+    redeemed: false,
+    month: 2
   },
   {
     id: "gelateria",
@@ -88,7 +95,8 @@ const initialCoupons: Coupon[] = [
     available: false,
     image: "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'La Gelateria'! 🍦 Vamos tomar um gelato?",
-    redeemed: false
+    redeemed: false,
+    month: 3
   },
   {
     id: "pizza-creck",
@@ -98,9 +106,15 @@ const initialCoupons: Coupon[] = [
     available: false,
     image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80",
     whatsappMessage: "Amor, quero resgatar meu cupom 'Pizza Creck'! 🍕 Que tal uma pizza hoje?",
-    redeemed: false
+    redeemed: false,
+    month: 4
   }
 ];
+
+// Get the current month (1-12)
+const getCurrentMonth = () => {
+  return new Date().getMonth() + 1; // JavaScript months are 0-indexed
+};
 
 // Load coupons from local storage or use initial data
 const loadCoupons = (): Coupon[] => {
@@ -127,7 +141,37 @@ export const useCoupons = () => {
   
   // Load coupons from localStorage on first render
   useEffect(() => {
-    setCoupons(loadCoupons());
+    const loadedCoupons = loadCoupons();
+    
+    // Update availability based on the current month
+    const currentMonth = getCurrentMonth();
+    console.log('Current month:', currentMonth);
+    
+    const updatedCoupons = loadedCoupons.map(coupon => {
+      // A coupon is available if:
+      // 1. It's for the current month or a previous month (within the 4-month period)
+      // 2. It hasn't been redeemed yet
+      // 3. No other coupon in the same group for a previous month is unredeemed
+      
+      const isForCurrentOrPreviousMonth = coupon.month && coupon.month <= currentMonth && coupon.month > currentMonth - 4;
+      
+      // Find if there are any unredeemed coupons in same group from previous months
+      const hasUnredeemedPreviousCoupons = loadedCoupons.some(c => 
+        c.group === coupon.group && 
+        c.month && coupon.month && 
+        c.month < coupon.month && 
+        c.month >= currentMonth - 3 && 
+        !c.redeemed
+      );
+      
+      return {
+        ...coupon,
+        available: isForCurrentOrPreviousMonth && !coupon.redeemed && !hasUnredeemedPreviousCoupons
+      };
+    });
+    
+    setCoupons(updatedCoupons);
+    console.log('Updated coupons:', updatedCoupons);
   }, []);
   
   // Save to localStorage whenever coupons change
@@ -137,21 +181,15 @@ export const useCoupons = () => {
   
   // Toggle between group 1 and group 2
   const toggleCouponGroup = (group: CouponGroup) => {
-    setCoupons(currentCoupons => {
-      return currentCoupons.map(coupon => ({
-        ...coupon,
-        available: coupon.group === group && !coupon.redeemed
-      }));
-    });
+    // This method now only affects the UI display, not the actual availability
+    setCoupons(prev => [...prev]); // Just trigger a re-render
   };
   
-  // Mark a coupon as redeemed and lock other coupons in the same group
+  // Mark a coupon as redeemed
   const redeemCoupon = (couponId: string) => {
     setCoupons(currentCoupons => {
       const couponToRedeem = currentCoupons.find(c => c.id === couponId);
       if (!couponToRedeem) return currentCoupons;
-      
-      const redeemedGroup = couponToRedeem.group;
       
       return currentCoupons.map(coupon => {
         if (coupon.id === couponId) {
@@ -161,21 +199,24 @@ export const useCoupons = () => {
             redeemedAt: new Date(),
             available: false
           };
-        } else if (coupon.group === redeemedGroup) {
-          // Lock other coupons in the same group
-          return {
-            ...coupon,
-            available: false
-          };
         }
         return coupon;
       });
     });
   };
   
-  // Reset coupons for a new month
+  // Reset all coupons (admin function)
   const resetCouponsForNewMonth = () => {
-    setCoupons(initialCoupons);
+    setCoupons(initialCoupons.map(coupon => ({
+      ...coupon,
+      redeemed: false,
+      available: coupon.month === 1 // Only first month coupons start as available
+    })));
+  };
+  
+  // Get coupons for a specific group
+  const getCouponsByGroup = (group: CouponGroup) => {
+    return coupons.filter(coupon => coupon.group === group);
   };
   
   // Get all available coupons
@@ -188,11 +229,6 @@ export const useCoupons = () => {
     return coupons.filter(coupon => coupon.redeemed);
   };
   
-  // Get all unavailable coupons
-  const getUnavailableCoupons = () => {
-    return coupons.filter(coupon => !coupon.available);
-  };
-  
   return {
     coupons,
     redeemCoupon,
@@ -200,6 +236,6 @@ export const useCoupons = () => {
     resetCouponsForNewMonth,
     getAvailableCoupons,
     getRedeemedCoupons,
-    getUnavailableCoupons
+    getCouponsByGroup
   };
 };

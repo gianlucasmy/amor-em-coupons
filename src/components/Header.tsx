@@ -11,7 +11,7 @@ const Header: React.FC = () => {
             <div className="flex items-center justify-center mb-2">
               <Heart className="w-6 h-6 text-soft-pink mr-2" fill="#FFDEE2" />
               <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-accent">
-                Cupons de Amor
+                Cupons de Aniversário
               </h1>
               <Heart className="w-6 h-6 text-soft-pink ml-2" fill="#FFDEE2" />
             </div>
@@ -20,7 +20,7 @@ const Header: React.FC = () => {
             
             <div className="max-w-3xl mx-auto">
               <p className="font-serif text-lg md:text-xl text-accent/80 leading-relaxed animate-fade-in delay-100">
-                Querida, preparei uma série de surpresas para os próximos meses para celebrar nosso amor com experiências únicas. 
+                Querida, preparei uma série de surpresas para os próximos meses para celebrar o seu aniversário com experiências únicas. 
                 Cada mês, você poderá resgatar 2 cupons especiais, divididos em dois grupos, que preparamos com muito carinho para você. 
                 Clique no cupom do mês e descubra uma experiência inesquecível!
               </p>

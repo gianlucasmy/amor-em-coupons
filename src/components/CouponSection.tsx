@@ -12,7 +12,8 @@ const CouponSection: React.FC = () => {
     coupons, 
     toggleCouponGroup, 
     redeemCoupon, 
-    resetCouponsForNewMonth 
+    resetCouponsForNewMonth,
+    getCouponsByGroup 
   } = useCoupons();
   
   const [activeGroup, setActiveGroup] = useState<CouponGroup>("group1");
@@ -28,6 +29,9 @@ const CouponSection: React.FC = () => {
     setShowResetDialog(false);
   };
   
+  // Get coupons for the active group
+  const activeCoupons = getCouponsByGroup(activeGroup);
+  
   // Count available and redeemed coupons per group
   const getCouponStats = (group: CouponGroup) => {
     const groupCoupons = coupons.filter(c => c.group === group);
@@ -39,10 +43,27 @@ const CouponSection: React.FC = () => {
   const group1Stats = getCouponStats("group1");
   const group2Stats = getCouponStats("group2");
 
+  // Get current month name
+  const getCurrentMonthName = () => {
+    const months = [
+      "Janeiro", "Fevereiro", "Março", "Abril", 
+      "Maio", "Junho", "Julho", "Agosto", 
+      "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    return months[new Date().getMonth()];
+  };
+
   return (
     <section className="py-8 mb-12">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="glass rounded-2xl p-6 sm:p-8 shadow-soft animate-fade-in delay-200">
+          {/* Month indicator */}
+          <div className="text-center mb-6">
+            <span className="inline-block bg-soft-pink/20 text-accent px-4 py-1 rounded-full text-sm font-medium">
+              {getCurrentMonthName()}
+            </span>
+          </div>
+          
           {/* Group selector */}
           <div className="flex justify-center mb-8">
             <div className="flex p-1 rounded-xl bg-soft-cream">
@@ -50,7 +71,7 @@ const CouponSection: React.FC = () => {
                 className={`relative py-2 px-6 rounded-lg font-medium text-sm transition-all duration-300 ${activeGroup === "group1" ? "bg-soft-pink text-accent" : "hover:bg-soft-pink/10"}`}
                 onClick={() => handleGroupToggle("group1")}
               >
-                Grupo 1
+                Restaurantes
                 {group1Stats.available > 0 && (
                   <span className="absolute -top-2 -right-2">
                     <span className="flex h-4 w-4">
@@ -67,7 +88,7 @@ const CouponSection: React.FC = () => {
                 className={`relative py-2 px-6 rounded-lg font-medium text-sm transition-all duration-300 ${activeGroup === "group2" ? "bg-muted-gold/60 text-accent" : "hover:bg-muted-gold/10"}`}
                 onClick={() => handleGroupToggle("group2")}
               >
-                Grupo 2
+                Lazer
                 {group2Stats.available > 0 && (
                   <span className="absolute -top-2 -right-2">
                     <span className="flex h-4 w-4">
@@ -100,7 +121,7 @@ const CouponSection: React.FC = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium text-sm">Administração</h4>
                   <p className="text-xs text-muted-foreground">
-                    Resetar cupons para o novo mês
+                    Resetar todos os cupons para começar novamente
                   </p>
                   <Button 
                     size="sm" 
@@ -108,7 +129,7 @@ const CouponSection: React.FC = () => {
                     onClick={() => setShowResetDialog(true)}
                   >
                     <RefreshCw className="h-3 w-3 mr-2" />
-                    Novo Mês
+                    Resetar Tudo
                   </Button>
                 </div>
               </PopoverContent>
@@ -125,17 +146,18 @@ const CouponSection: React.FC = () => {
                 ? "Aproveite essas experiências deliciosas em locais especiais." 
                 : "Desfrute desses momentos únicos para criar memórias inesquecíveis."}
             </p>
+            <p className="text-accent/60 text-sm mt-2">
+              Um cupom disponível por mês, por até 4 meses
+            </p>
           </div>
           
           {/* Coupons grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {coupons
-              .filter(coupon => coupon.group === activeGroup)
-              .map((coupon, index) => (
-                <div key={coupon.id} className={`animate-fade-in delay-${(index + 1) * 100}`}>
-                  <Coupon coupon={coupon} onRedeem={redeemCoupon} />
-                </div>
-              ))}
+            {activeCoupons.map((coupon, index) => (
+              <div key={coupon.id} className={`animate-fade-in delay-${(index + 1) * 100}`}>
+                <Coupon coupon={coupon} onRedeem={redeemCoupon} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -146,7 +168,7 @@ const CouponSection: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-accent">Resetar todos os cupons?</AlertDialogTitle>
             <AlertDialogDescription>
-              Isso vai liberar todos os cupons como se fosse um novo mês. 
+              Isso vai liberar todos os cupons novamente. 
               Todos os registros de resgates anteriores serão perdidos.
             </AlertDialogDescription>
           </AlertDialogHeader>
