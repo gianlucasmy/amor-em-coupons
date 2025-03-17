@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             <div className="max-w-3xl mx-auto">
               <p className="font-serif text-lg md:text-xl text-accent/80 leading-relaxed animate-fade-in delay-100">
                 Querida, preparei uma série de surpresas para os próximos meses para celebrar o seu aniversário com experiências únicas.
-                Resgate um cupom e viva um momento inesquecível!
+                Resgate um cupom e viva um momento inesquecível! A cada mês, você poderá resgatar um cupom de cada grupo e viver momentos inesquecíveis.
               </p>
             </div>
           </div>
