@@ -147,7 +147,7 @@ const CouponSection: React.FC = () => {
                 : "Desfrute desses momentos únicos para criar memórias inesquecíveis."}
             </p>
             <p className="text-accent/60 text-sm mt-2">
-              Um cupom disponível por mês, por até 4 meses
+              Escolha um cupom para resgatar
             </p>
           </div>
           

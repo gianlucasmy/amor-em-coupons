@@ -13,37 +13,11 @@ export const useCoupons = () => {
   useEffect(() => {
     const loadedCoupons = loadCoupons();
     
-    // Update availability based on the current month
-    const currentMonth = getCurrentMonth();
-    console.log('Current month:', currentMonth);
-    
+    // Make all unredeemed coupons available initially
     const updatedCoupons = loadedCoupons.map(coupon => {
-      // Check if any coupon in this group has been redeemed in the current month
-      const hasRedeemedCouponInGroup = loadedCoupons.some(c => 
-        c.group === coupon.group && 
-        c.redeemed && 
-        c.redeemedAt && 
-        new Date(c.redeemedAt).getMonth() + 1 === currentMonth
-      );
-
-      // For each group, make available:
-      // 1. The earliest unredeemed coupon for the current month if none redeemed yet
-      // 2. Or nothing if a coupon from this group has been redeemed this month
-      let shouldBeAvailable = false;
-      
-      if (!coupon.redeemed && !hasRedeemedCouponInGroup) {
-        // Find the earliest unredeemed coupon in this group
-        const earliestUnredeemed = loadedCoupons
-          .filter(c => c.group === coupon.group && !c.redeemed)
-          .sort((a, b) => (a.month || 999) - (b.month || 999))[0];
-        
-        // Make it available if this is that coupon
-        shouldBeAvailable = coupon.id === earliestUnredeemed?.id;
-      }
-      
       return {
         ...coupon,
-        available: shouldBeAvailable
+        available: !coupon.redeemed
       };
     });
     
@@ -68,8 +42,6 @@ export const useCoupons = () => {
       const couponToRedeem = currentCoupons.find(c => c.id === couponId);
       if (!couponToRedeem) return currentCoupons;
       
-      const currentMonth = getCurrentMonth();
-      
       // Update the coupon being redeemed
       const updatedCoupons = currentCoupons.map(coupon => {
         if (coupon.id === couponId) {
@@ -81,7 +53,7 @@ export const useCoupons = () => {
           };
         }
         
-        // Lock all remaining coupons in the same group until next month
+        // Block all other coupons in the same group
         if (coupon.group === couponToRedeem.group && !coupon.redeemed) {
           return {
             ...coupon,
@@ -101,7 +73,7 @@ export const useCoupons = () => {
     setCoupons(initialCoupons.map(coupon => ({
       ...coupon,
       redeemed: false,
-      available: coupon.month === 1 // Only first month coupons start as available
+      available: true // All cupons start as available
     })));
   };
   
