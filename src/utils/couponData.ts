@@ -148,25 +148,32 @@ export const useCoupons = () => {
     console.log('Current month:', currentMonth);
     
     const updatedCoupons = loadedCoupons.map(coupon => {
-      // A coupon is available if:
-      // 1. It's for the current month or a previous month (within the 4-month period)
-      // 2. It hasn't been redeemed yet
-      // 3. No other coupon in the same group for a previous month is unredeemed
-      
-      const isForCurrentOrPreviousMonth = coupon.month && coupon.month <= currentMonth && coupon.month > currentMonth - 4;
-      
-      // Find if there are any unredeemed coupons in same group from previous months
-      const hasUnredeemedPreviousCoupons = loadedCoupons.some(c => 
+      // Check if any coupon in this group has been redeemed in the current month
+      const hasRedeemedCouponInGroup = loadedCoupons.some(c => 
         c.group === coupon.group && 
-        c.month && coupon.month && 
-        c.month < coupon.month && 
-        c.month >= currentMonth - 3 && 
-        !c.redeemed
+        c.redeemed && 
+        c.redeemedAt && 
+        new Date(c.redeemedAt).getMonth() + 1 === currentMonth
       );
+
+      // For each group, make available:
+      // 1. The earliest unredeemed coupon for the current month if none redeemed yet
+      // 2. Or nothing if a coupon from this group has been redeemed this month
+      let shouldBeAvailable = false;
+      
+      if (!coupon.redeemed && !hasRedeemedCouponInGroup) {
+        // Find the earliest unredeemed coupon in this group
+        const earliestUnredeemed = loadedCoupons
+          .filter(c => c.group === coupon.group && !c.redeemed)
+          .sort((a, b) => (a.month || 999) - (b.month || 999))[0];
+        
+        // Make it available if this is that coupon
+        shouldBeAvailable = coupon.id === earliestUnredeemed?.id;
+      }
       
       return {
         ...coupon,
-        available: isForCurrentOrPreviousMonth && !coupon.redeemed && !hasUnredeemedPreviousCoupons
+        available: shouldBeAvailable
       };
     });
     
@@ -191,7 +198,10 @@ export const useCoupons = () => {
       const couponToRedeem = currentCoupons.find(c => c.id === couponId);
       if (!couponToRedeem) return currentCoupons;
       
-      return currentCoupons.map(coupon => {
+      const currentMonth = getCurrentMonth();
+      
+      // Update the coupon being redeemed
+      const updatedCoupons = currentCoupons.map(coupon => {
         if (coupon.id === couponId) {
           return {
             ...coupon,
@@ -200,8 +210,19 @@ export const useCoupons = () => {
             available: false
           };
         }
+        
+        // Lock all remaining coupons in the same group until next month
+        if (coupon.group === couponToRedeem.group && !coupon.redeemed) {
+          return {
+            ...coupon,
+            available: false
+          };
+        }
+        
         return coupon;
       });
+      
+      return updatedCoupons;
     });
   };
   
