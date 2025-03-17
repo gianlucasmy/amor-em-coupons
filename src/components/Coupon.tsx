@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Coupon as CouponType } from '../utils/couponData';
+import { Coupon as CouponType } from '../utils/couponUtils';
 import { Gift, Heart, Check, Share2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";

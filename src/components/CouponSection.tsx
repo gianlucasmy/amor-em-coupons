@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import Coupon from './Coupon';
-import { useCoupons, CouponGroup } from '../utils/couponData';
+import { useCoupons, CouponGroup, getCurrentMonthName } from '../utils/couponUtils';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
