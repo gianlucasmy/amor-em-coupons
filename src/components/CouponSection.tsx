@@ -43,16 +43,6 @@ const CouponSection: React.FC = () => {
   const group1Stats = getCouponStats("group1");
   const group2Stats = getCouponStats("group2");
 
-  // Get current month name
-  const getCurrentMonthName = () => {
-    const months = [
-      "Janeiro", "Fevereiro", "Março", "Abril", 
-      "Maio", "Junho", "Julho", "Agosto", 
-      "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
-    return months[new Date().getMonth()];
-  };
-
   return (
     <section className="py-8 mb-12">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
