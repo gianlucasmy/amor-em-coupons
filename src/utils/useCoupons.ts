@@ -11,6 +11,7 @@ export const useCoupons = () => {
   
   // Load coupons from localStorage on first render
   useEffect(() => {
+    // Sempre usa dados iniciais na primeira carga para garantir que temos os dados corretos
     const loadedCoupons = loadCoupons();
     
     // Make all unredeemed coupons available initially

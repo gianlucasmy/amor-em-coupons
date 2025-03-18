@@ -2,6 +2,19 @@
 import { Coupon } from './couponTypes';
 import { initialCoupons } from './couponInitialData';
 
+// Força limpar localStorage na inicialização para garantir uso dos dados corretos
+const clearLocalStorage = () => {
+  try {
+    localStorage.removeItem('coupons');
+    console.log("Storage cleared to ensure correct data");
+  } catch (e) {
+    console.error("Error clearing storage", e);
+  }
+};
+
+// Executar a limpeza imediatamente
+clearLocalStorage();
+
 // Load coupons from local storage or use initial data
 export const loadCoupons = (): Coupon[] => {
   const storedCoupons = localStorage.getItem('coupons');
