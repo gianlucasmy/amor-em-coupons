@@ -7,16 +7,21 @@ export const loadCoupons = (): Coupon[] => {
   const storedCoupons = localStorage.getItem('coupons');
   if (storedCoupons) {
     try {
-      return JSON.parse(storedCoupons);
+      const parsedCoupons = JSON.parse(storedCoupons);
+      console.log("Loaded coupons from storage:", parsedCoupons);
+      return parsedCoupons;
     } catch (e) {
       console.error('Error parsing stored coupons', e);
+      console.log("Using initial coupons instead");
       return initialCoupons;
     }
   }
+  console.log("No stored coupons found, using initial data");
   return initialCoupons;
 };
 
 // Save coupons to local storage
 export const saveCoupons = (coupons: Coupon[]) => {
   localStorage.setItem('coupons', JSON.stringify(coupons));
+  console.log("Saved coupons to storage:", coupons);
 };
