@@ -70,7 +70,6 @@ export const useCoupons = () => {
   
   // Reset all coupons (admin function)
   const resetCouponsForNewMonth = () => {
-    localStorage.removeItem('coupons'); // Clear existing data to force reload
     setCoupons(initialCoupons.map(coupon => ({
       ...coupon,
       redeemed: false,
