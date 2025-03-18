@@ -71,7 +71,7 @@ const CouponSection: React.FC = () => {
                 className={`relative py-2 px-6 rounded-lg font-medium text-sm transition-all duration-300 ${activeGroup === "group1" ? "bg-soft-pink text-accent" : "hover:bg-soft-pink/10"}`}
                 onClick={() => handleGroupToggle("group1")}
               >
-                Restaurantes
+                Grupo 1
                 {group1Stats.available > 0 && (
                   <span className="absolute -top-2 -right-2">
                     <span className="flex h-4 w-4">
@@ -88,7 +88,7 @@ const CouponSection: React.FC = () => {
                 className={`relative py-2 px-6 rounded-lg font-medium text-sm transition-all duration-300 ${activeGroup === "group2" ? "bg-muted-gold/60 text-accent" : "hover:bg-muted-gold/10"}`}
                 onClick={() => handleGroupToggle("group2")}
               >
-                Lazer
+                Grupo 2
                 {group2Stats.available > 0 && (
                   <span className="absolute -top-2 -right-2">
                     <span className="flex h-4 w-4">
